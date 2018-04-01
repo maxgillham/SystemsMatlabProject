@@ -1,6 +1,6 @@
 
 %part i) Plot signal and distorted signal
-T = 0:.01:5;
+T = 0:.001:5
 
 figure 
 hold on
@@ -9,14 +9,14 @@ plot(T,x(T));
 plot(T,y(x(T),n(T)));
 legend('x(t)','y(t)');
 
-%part ii) plot CCFT of y, filter CCFT, plot inverse of filted transform
+%part ii) Recover using low pass 
 
 y_sample = y(x(T), n(T));
 
 y_transformed = fft(y_sample);
 
 y_filtered = y_transformed;
-percent_cut = .027
+percent_cut = .0023747
 y_filtered(length(y_filtered)*percent_cut:length(y_filtered)*(1-percent_cut)) = 0;
 y_recover = ifft(y_filtered)
 
@@ -30,6 +30,12 @@ hold on
 plot(T, abs(y_recover), 'r');
 plot(T, x(T));
 legend('Recovered signal x(t)','Original signal x(t)')
+
+%part iii) recover using butterword
+[A,B,C,D] = butter(5,[500 560]/750)
+
+[b,a] = ss2tf(A,B,C,D)
+
 
 
 function x1 = x(T)
