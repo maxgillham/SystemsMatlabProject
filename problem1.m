@@ -22,6 +22,7 @@ y_recover = ifft(y_filtered);
 %{
 ft1 = fft(x(T))
 ft2 = fft(n(T))
+nyquist(ft1)
 figure 
 hold on
 plot(T, ft1)
@@ -44,12 +45,27 @@ legend('Recovered signal x(t)','Original signal x(t)')
 
 %{
 [A,B] = butter(1,.05,'low');
-%}
-[A,B] = butter(2,0.0625, 'low')
+
+[A,B] = butter(1,0.0625, 'low')
 
 y_butfilt = filter(A,B,y_transformed);
 
-y_butreco = ifft(abs(y_butfilt));
+y_butreco = ifft(y_butfilt);
+%}
+
+Wp = 45/200;
+Ws = 1/200;
+
+[p,W] = buttord(Wp,Ws,8,40)
+
+[A,B,C,D] = butter(p,W);
+hd = dfilt.statespace(A,B,C,D)
+y_fil = y_transformed;
+y_fil(length(y_fil)*percent_cut:length(y_fil)*(1-percent_cut)) = 0;
+
+y_butfilt = filter(hd,(y_fil));
+y_butreco = ifft(y_butfilt);
+
 figure
 hold on
 plot(T,abs(y_butreco));
