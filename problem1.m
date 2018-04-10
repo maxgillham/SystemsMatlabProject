@@ -1,35 +1,48 @@
 
 %part i) Plot signal and distorted signal
 T = linspace(0,10,81);
+y_sample = y(x(T), n(T));
+
+figure
+hold on
+plot(T,x(T));
+plot(T,y(x(T),n(T)));
+title('Part 1: Signal and Distored Signal','fontweight','bold','fontsize',16)
+legend('Origonal Signal','Distorted Signal');
+
 
 figure 
 hold on
-
-plot(T,x(T));
-plot(T,y(x(T),n(T)));
-legend('x(t)','y(t)');
-%part ii) Recover using low pass 
-
-y_sample = y(x(T), n(T));
-
+plot(T,fft(x(T)))
+plot(T,fft(n(T)))
+legend('x', 'n')
+%part ii) Recover signal using a low pass filter
 y_transformed = fft(y_sample);
-
+percent_cut = 0.075;
 y_filtered = y_transformed;
-percent_cut = .0625;
 y_filtered(length(y_filtered)*percent_cut:length(y_filtered)*(1-percent_cut)) = 0;
 y_recover = ifft(y_filtered);
 
 
 figure
-hold on 
+hold on
+subplot(2,1,1);
 plot(T, y_transformed);
+title('Forier Transform of Distorted Signal','fontweight','bold','fontsize',16);
+subplot(2,1,2);
 plot(T, y_filtered);
-legend('Forier Tansform of y(t)','Filtered Forier Transform of y(t)')
+title('Filtered Forier Transform','fontweight','bold','fontsize',16)
+
+
 figure 
 hold on
+subplot(2,1,1);
 plot(T, real(y_recover), 'r');
+title('Recovered Signal','fontweight','bold','fontsize',16)
+subplot(2,1,2);
 plot(T, x(T));
-legend('Recovered signal','Original signal')
+title('Origonal Signal','fontweight','bold','fontsize',16)
+
 
 %part iii) recover using butterworth
 
@@ -45,6 +58,7 @@ hold on
 plot(T,(y_butfiltr));
 plot(T, x(T));
 legend('Recovered Signal','Origonal Signal')
+
 
 function x1 = x(T)
     x1 = 10*exp((-T.^2)/2);
